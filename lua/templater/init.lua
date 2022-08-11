@@ -1,5 +1,5 @@
-local substitutor = require("templator.var_substitutor")
-local config = require("templator.config")
+local substitutor = require("templater.var_substitutor")
+local config = require("templater.config")
 
 local templator = {}
 

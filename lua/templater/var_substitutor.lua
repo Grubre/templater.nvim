@@ -1,4 +1,4 @@
-local config = require("templator.config")
+local config = require("templater.config")
 local M = {}
 
 M._substitute_vars = function ()
