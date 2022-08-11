@@ -38,7 +38,7 @@ local defaults = {
 In order to use the plugin you have to declare your ```["variable"] = substitution``` pairs.\
 You can do this by overriding the ```variables``` table in the setup function.\
 Then you can use the ```require("templater").sub()``` function or ```:Sub``` command to
-substitute all the variables found in the current buffer to their corresponding substitution value. \
+substitute all the variables found in the current buffer to their corresponding substitution value.
 
 ### For example:
 In your call to the setup function:
