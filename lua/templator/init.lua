@@ -1,7 +1,9 @@
+local substitutor = require("templator.var_substitutor")
+local config = require("templator.config")
+
 local templator = {}
 
-local substitutor = require("templator.var_substitutor")
-
-templator.sub = function() substitutor._substitute_vars() end
+templator.setup = config.setup
+templator.sub = substitutor._substitute_vars
 
 return templator 

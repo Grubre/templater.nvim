@@ -1,8 +1,9 @@
 local M = {}
 
-local variables = {}
-variables["NAME"] = "jabuk"
-variables["TEST"] = "test abc"
+local variables = {
+    ["NAME"] = "jabuk",
+    ["TEST"] = "test abc",
+}
 
 M.variables = variables
 
