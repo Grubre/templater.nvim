@@ -54,7 +54,7 @@ require("templater").setup({
     }
 })
 ```
-Then using it on this buffer:
+Then using ```:Sub``` on this buffer:
 ```cpp
 name
 name2
