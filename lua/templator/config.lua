@@ -1,10 +1,7 @@
 local config = {}
 
 local defaults = {
-    variables = {
-        ["NAME"] = "jabuk",
-        ["TEST"] = "test abc",
-    }
+    variables = {}
 }
 
 config.setup = function(opts)
