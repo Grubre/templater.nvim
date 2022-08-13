@@ -6,10 +6,10 @@ M.string = function(str)
     end
 end
 
-M.input = function()
+M.input = function(opts)
     return function(callback)
-        local p = "Input"
-        vim.ui.input({prompt = p}, function(input)
+        local options = vim.tbl_deep_extend("force", {}, {prompt = "Input"}, opts or {})
+        vim.ui.input(options, function(input)
             callback(input)
         end)
     end
