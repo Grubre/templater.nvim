@@ -15,4 +15,13 @@ M.input = function(opts)
     end
 end
 
+M.select = function(items, opts)
+    return function(callback)
+        local options = vim.tbl_deep_extend("force", {}, {prompt = "Select"}, opts or {})
+        vim.ui.select(items, options, function(input)
+            callback(input)
+        end)
+    end
+end
+
 return M
