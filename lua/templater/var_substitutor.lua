@@ -7,7 +7,14 @@ M._substitute_vars = function ()
 
     -- Substitute the variables
     for pattern,func in pairs(config.options.variables) do
-        vim.api.nvim_command('silent! %s:\\<'..pattern..'\\>:'..func()..':g')
+        if vim.fn.search(pattern)==0 then
+            goto continue
+        end
+        local callback_func = function(val)
+            vim.api.nvim_command('silent! %s:\\<'..pattern..'\\>:'..val..':g')
+        end
+        func(callback_func)
+        ::continue::
     end
 
     -- Move the cursor back to it's original position
