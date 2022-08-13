@@ -1,12 +1,17 @@
 local config = require("templater.config")
 local file_templater = {}
 
+local keep_blank_lines = function(s)
+    if s:sub(-1)~="\n" then s=s.."\n" end
+    return s:gmatch("(.-)\n")
+end
+
 local _use_template = function(chosen_template)
     if vim.fn.filereadable(chosen_template)==1 then
         local file = assert(io.open(chosen_template, "r"))
-        local t = file:read("*all")
+        local t = file:read("*a")
         local lines = {}
-        for str in string.gmatch(t, "([^".."\n".."]+)") do
+        for str in keep_blank_lines(t) do
             table.insert(lines, str)
         end
         local og_row, og_column = unpack(vim.api.nvim_win_get_cursor(0))
@@ -45,11 +50,9 @@ file_templater.use_template = function (file_name)
             table.insert(files, str)
         end
 
-        vim.pretty_print(files)
         vim.ui.select(files, {prompt = "Choose template"}, function(input)
             if input==nil then return end
             chosen_template = file_path..input
-            print("chosen template = "..chosen_template)
             _use_template(chosen_template)
         end)
     end
