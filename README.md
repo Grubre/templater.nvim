@@ -41,23 +41,23 @@ local defaults = {
 Currently, there are three functions to interact with the file templates:
 |function                              |description                                                 |
 |--------------------------------------|------------------------------------------------------------|
-|require('templator').add_template()   |Saves the current buffer as a template                          |
-|require('templator').remove_template()|Deletes a saved template                                    |
-|require('templator').use_template()   |Copies contents of a saved template to the current buffer   |
+|require('templater').add_template()   |Saves the current buffer as a template                          |
+|require('templater').remove_template()|Deletes a saved template                                    |
+|require('templater').use_template()   |Copies contents of a saved template to the current buffer   |
 
 #### Adding templates
-With the use ```require("templator").add_template(opt_name)``` you can save the current
+With the use ```require("templater").add_template(opt_name)``` you can save the current
 buffer as a template. The ```opt_name``` parameter will be used as the name for the template,
 if you don't pass any arguments to the function, you will be asked to provide a name using
 vim.ui.input.
 
 #### Deleting templates
-Similarly to adding templates, by using ```require("templator").remove_template(opt_name)```
+Similarly to adding templates, by using ```require("templater").remove_template(opt_name)```
 you can remove template of name ```opt_name```. If you don't pass any arguments you will be
 prompted to choose one with vim.ui.select.
 
 #### Using templates
-Just like the previous two functions, you can do ```require("templator").use_template(opt_name)```
+Just like the previous two functions, you can do ```require("templater").use_template(opt_name)```
 to use template of name ```opt_name```. If you don't pass any parameters, you will be asked to
 select a template from the list using vim.ui.select. The chosen template gets yanked to the current
 buffer, under your cursor.
