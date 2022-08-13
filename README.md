@@ -6,7 +6,7 @@ Neovim plugin for creating usable file and variable templates, written in lua.
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```viml
-Plug 'nvim-lua/plenary.nvim'
+Plug 'Grubre/templater.nvim'
 ```
 
 Using [dein](https://github.com/Shougo/dein.vim)
