@@ -1,9 +1,18 @@
-local substitutor = require("templater.var_substitutor")
 local config = require("templater.config")
+local substitutor = require("templater.var_substitutor")
+local file_templater = require("templater.file_templater")
 
-local templator = {}
+local templater = {}
 
-templator.setup = config.setup
-templator.sub = substitutor._substitute_vars
+-- SETUP FUNC
+templater.setup = config.setup
 
-return templator
+-- VARIABLES API
+templater.sub = substitutor._substitute_vars
+
+-- FILE TEMPLATES API
+templater.add_template = file_templater.add_template
+templater.use_template = file_templater.use_template
+templater.remove_template = file_templater.remove_template
+
+return templater

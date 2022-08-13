@@ -1,6 +1,5 @@
-local file_path = require("templater.config").options.file_templates_path
+local config = require("templater.config")
 local file_templater = {}
-
 
 local _use_template = function(chosen_template)
     if vim.fn.filereadable(chosen_template)==1 then
@@ -18,6 +17,7 @@ local _use_template = function(chosen_template)
 end
 
 file_templater.add_template = function(file_name)
+    local file_path = config.options.file_templates_path
     if file_name==nil then
         vim.ui.input({prompt = "Name of the template"}, function(input)
             vim.cmd('w '..file_path..input)
@@ -28,6 +28,7 @@ file_templater.add_template = function(file_name)
 end
 
 file_templater.use_template = function (file_name)
+    local file_path = config.options.file_templates_path
     local chosen_template
     if not file_name==nil then
         chosen_template = file_path..file_name
@@ -46,6 +47,7 @@ file_templater.use_template = function (file_name)
 
         vim.pretty_print(files)
         vim.ui.select(files, {prompt = "Choose template"}, function(input)
+            if input==nil then return end
             chosen_template = file_path..input
             print("chosen template = "..chosen_template)
             _use_template(chosen_template)
@@ -54,6 +56,7 @@ file_templater.use_template = function (file_name)
 end
 
 file_templater.remove_template = function (file_name)
+    local file_path = config.options.file_templates_path
     if file_name==nil then
         vim.ui.input({prompt = "Name of the template to delete"}, function(input)
             vim.cmd('!rm '..file_path..input)
@@ -62,7 +65,5 @@ file_templater.remove_template = function (file_name)
         vim.cmd('!rm '..file_path..file_name)
     end
 end
-
-
 
 return file_templater
