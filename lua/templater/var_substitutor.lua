@@ -12,7 +12,7 @@ M._sub_vars = function(index)
         return
     end
     local callback_func = function(val)
-        vim.api.nvim_command('silent! %s:\\<'..pattern..'\\>:'..val..':g')
+        vim.api.nvim_command('silent! %s:'..pattern..':'..val..':g')
         M._sub_vars(index+1)
     end
     func(callback_func)
