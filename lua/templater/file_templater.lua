@@ -10,7 +10,7 @@ end
 
 
 -- Returns all the templates saved in config.options.file_templates_path directory
-local get_templates = function()
+file_templater.get_templates = function()
     -- Get file names in the template folder using ls
     local handle = io.popen('ls '..config.options.file_templates_path)
     local result = handle:read("*a")
@@ -87,7 +87,7 @@ file_templater.use_template = function (opts)
     if not (opts.file_name==nil) then
         _use_template(opts.file_name, opts)
     else
-        vim.ui.select(get_templates(), {prompt = "Choose template"}, function(input)
+        vim.ui.select(file_templater.get_templates(), {prompt = "Choose template"}, function(input)
             assert(input~=nil, "You have to choose a template!")
             _use_template(input, opts)
         end)
@@ -128,7 +128,7 @@ end
 -- A public function to remove a template
 file_templater.remove_template = function (file_name)
     local file_path = config.options.file_templates_path
-    local templates = get_templates()
+    local templates = file_templater.get_templates()
     if file_name==nil then
         vim.ui.select(templates, {prompt = "Delete template"}, function(input)
             assert(vim.fn.filereadable(file_path..input)~=0, "Template "..input.. " doesn't exist!")

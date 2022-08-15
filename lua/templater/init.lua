@@ -14,5 +14,6 @@ templater.sub = substitutor._substitute_vars
 templater.add_template = file_templater.add_template
 templater.use_template = file_templater.use_template
 templater.remove_template = file_templater.remove_template
+templater.get_templates = file_templater.get_templates
 
 return templater
