@@ -1,31 +1,18 @@
 local config = require("templater.config")
 local M = {}
 
-local escape_problematic_chars = function(str)
-    return str:gsub("%W", {
-        ["#"] = "\\#",
-        ["("] = "\\(",
-        [")"] = "\\)",
-        ["]"] = "\\]",
-        ["["] = "\\[",
-        ["{"] = "\\{",
-        ["}"] = "\\}",
-    })
-end
-
 -- RECURSIVE IMPLEMENTATION
 M._sub_vars = function(index)
     if index>#config.variable_names then return end
         -- Substitute the variables
     local pattern = config.variable_names[index]
     local func = config.options.variables[pattern]
-    local escaped_pattern = escape_problematic_chars(pattern)
     if vim.fn.search(pattern)==0 then
         M._sub_vars(index+1)
         return
     end
     local callback_func = function(val)
-        vim.api.nvim_command('silent! %s:\\<'..escaped_pattern..'\\>:'..val..':g')
+        vim.api.nvim_command('silent! %s:\\<'..pattern..'\\>:'..val..':g')
         M._sub_vars(index+1)
     end
     func(callback_func)
