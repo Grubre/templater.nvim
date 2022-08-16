@@ -111,18 +111,26 @@ end
 -- ######################################################
 -- REMOVE_TEMPLATE
 -- ######################################################
--- A public function to remove a template
-file_templater.remove_template = function (name)
+-- A table of options for the remove_template function
+-- name -> str: the name of the template
+local remove_template_def_opts = {name = nil}
+-- private function that actually removes the template
+local _remove_template = function (name, opts)
     local file_path = config.options.file_templates_path
+    assert(vim.fn.filereadable(file_path..name)~=0, "Template "..name.. " doesn't exist!")
+    vim.cmd('silent !rm '..file_path..name)
+end
+-- A public function to remove a template
+file_templater.remove_template = function (opts)
+    opts = vim.tbl_deep_extend("force", {}, remove_template_def_opts, opts or {})
     local templates = file_templater.get_templates()
-    if name==nil then
+    if opts.name==nil then
         vim.ui.select(templates, {prompt = "Delete template"}, function(input)
-            assert(vim.fn.filereadable(file_path..input)~=0, "Template "..input.. " doesn't exist!")
-            vim.cmd('silent !rm '..file_path..input)
+            if input==nil then return end
+            _remove_template(input,opts)
         end)
     else
-        assert(vim.fn.filereadable(file_path..name)~=0, "Template "..name.. " doesn't exist!")
-        vim.cmd('silent !rm '..file_path..name)
+        _remove_template(opts.name,opts)
     end
 end
 
