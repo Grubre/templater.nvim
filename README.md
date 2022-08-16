@@ -41,9 +41,9 @@ local defaults = {
 Currently, there are three functions to interact with the file templates:
 |function                              |description                                                 |
 |--------------------------------------|------------------------------------------------------------|
-|require('templater').add_template()   |Saves the current buffer as a template                          |
+|require('templater').add_template()   |Saves the current buffer as a template                      |
 |require('templater').remove_template()|Deletes a saved template                                    |
-|require('templater').use_template()   |Copies contents of a saved template to the current buffer   |
+|require('templater').use_template()   |Copies contents of selected template under the cursor       |
 
 #### Adding templates
 With the use ```require("templater").add_template(opt_name)``` you can save the current
@@ -79,21 +79,21 @@ require("templater").setup({
         -- You can use builtin templates:
         -- String:
         -- Simply substitutes all occurences of a given variable to another string
-        ["#NAME#"] = templates.string("Bob"),
+        ["NAME"] = templates.string("Bob"),
         -- Input:
         -- uses vim.ui.input to get the value on the spot
         -- you can pass optional arguments to vim.ui,input
-        ["#AGE#"] = templates.input({prompt = "Pass your age"}),
+        ["AGE"] = templates.input({prompt = "Pass your age"}),
         -- Select:
         -- uses vim.ui.select
         -- you have to pass a table to select from
         -- also just as above you can pass the optional arguments
-        ["#FAV_DRINK#"] = templates.select({"Coffee", "Tea", "Water"}),
+        ["FAV_DRINK"] = templates.select({"Coffee", "Tea", "Water"}),
         -- Custom function:
         -- You can also use custom function, it has to take one argument,
         -- a callback function which also takes one argument,
         -- the string to which all occurences are substituted to
-        ["#FOO#"] = function(callback)
+        ["FOO"] = function(callback)
             local str = ""
             str = "B".."A".."R"
             callback(str)
