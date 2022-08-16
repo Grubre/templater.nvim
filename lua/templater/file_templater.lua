@@ -74,13 +74,7 @@ end
 local _use_template
 -- A table of options for the use_template function
 -- name -> str: the name of the template
--- buf_type -> str: {
-    --                  'e' - create new buffer,
-    --                  'v' - use vsplit,
-    --                  's' - use split,
-    --                  otherwise - use current buffer
-                -- }
-local use_template_def_opts = {name = nil, buf_type = 'c'}
+local use_template_def_opts = {name = nil}
 
 -- A public function to use an existing template
 file_templater.use_template = function (opts)
@@ -107,15 +101,6 @@ _use_template = function(name, opts)
         table.insert(lines, str)
     end
 
-    if opts.buf_type=='e' then
-        vim.api.nvim_command('e! '..name)
-    elseif opts.buf_type=='v' then
-        vim.api.nvim_command('vsplit')
-        vim.api.nvim_buf_set_name(0, name)
-    elseif opts.buf_type=='s' then
-        vim.api.nvim_command('split')
-        vim.api.nvim_buf_set_name(0, name)
-    end
     local og_row, og_column = unpack(vim.api.nvim_win_get_cursor(0))
     vim.fn.append(og_row-1,lines)
     vim.api.nvim_win_set_cursor(0, {og_row, og_column})
