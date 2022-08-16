@@ -1,0 +1,151 @@
+============================================================================
+INTRODUCTION                                                  *templater.nvim*
+
+Templater.nvim allows you to create, use and manage file templates,
+as well as create substitution patterns with corresponding functions.
+
+
+============================================================================
+GETTING STARTED                                         *templater.quickstart*
+
+    In order to get started, put require("templater").setup() in your config.
+
+templater.setup({opts})                                    *templater.setup()*
+
+    Setup function to be run by user. Configures all modules
+    of templater.nvim.
+
+    Usage:
+    >
+    require('templater').setup({
+        --Specifies where template files are stored
+        --By default is equal to vim.fn.stdpath("data").."/templater/",
+        file_templates_path = "your/path/to/templates",
+        --Specifies variables used by var_substitutor
+        --Empty by default, in order to use the module,
+        --you have to put some variables here.
+        variables = {
+            -- You can use builtin templates:
+            -- String:
+            -- Simply substitutes all occurences of a given variable to another string
+            ["NAME"] = templates.string("Bob"),
+            -- Input:
+            -- uses vim.ui.input to get the value on the spot
+            -- you can pass optional arguments to vim.ui,input
+            ["AGE"] = templates.input({prompt = "Pass your age"}),
+            -- Select:
+            -- uses vim.ui.select
+            -- you have to pass a table to select from
+            -- also just as above you can pass the optional arguments
+            ["FAV_DRINK"] = templates.select({"Coffee", "Tea", "Water"}),
+            -- Custom function:
+            -- You can also use custom function, it has to take one argument,
+            -- a callback function which also takes one argument,
+            -- the string to which all occurences are substituted to
+            ["FOO"] = function(callback)
+                local str = ""
+                str = "B".."A".."R"
+                callback(str)
+            end
+        }
+    })
+<
+
+============================================================================
+TEMPLATES                                                *templater.templates*
+
+    The templates module is responsible for interaction with file templates.
+
+templater.add_template({opts})                      *templater.add_template()*
+
+    Adds a new template
+
+
+    Parameters: ~
+        {opts}  (table)  options defining the function behavior
+                         default values:
+                         {template = nil, overwrite = "no"}
+
+    Options: ~
+        {name}                  (string)        name of the template,
+                                                if nil, the user will be
+                                                prompted with vim.ui.input
+                                                to provide the name
+        {overwrite}             (string)        defines whether to overwrite
+                                                if a template `name` already
+                                                exists, possible values:
+                                                `'yes'` - overwrite the file
+                                                `'prompt'` - ask the user
+                                                `'no'` - don't overwrite
+
+
+templater.use_template({opts})                      *templater.use_template()*
+
+    Pastes contents of a template under the cursor
+
+
+    Parameters: ~
+        {opts}  (table)  options defining the function behavior
+                         default values:
+                         {name = nil}
+
+    Options: ~
+        {name}                  (string)        name of the template,
+                                                if nil, the user will be
+                                                prompted with vim.ui.input
+                                                to provide the name
+
+
+templater.remove_template({opts})               *templater.remove_template()*
+
+    Deletes an existing template
+
+
+    Parameters: ~
+        {opts}  (table)  options defining the function behavior
+                         default values:
+                         {name = nil}
+
+    Options: ~
+        {name}                  (string)        name of the template,
+                                                if nil, the user will be
+                                                prompted with vim.ui.input
+                                                to provide the name
+
+
+============================================================================
+VARIABLES                                                *templater.variables*
+
+    The `variables` is responsible for interacting with variables.
+    How to set `variables` is shown in |templater.quickstart|.
+
+templater.sub()                                              *templater.sub()*
+
+    Substitutes all the variables found in current buffer.
+
+    example:
+        with variables:
+            ["NAME"] = require("templater.templates").input()
+            ["EMAIL"] = require("templater.templates").string("abc@xyz.com")
+        after function is used, you will be prompted with vim.ui.input,
+
+        if you enter:
+        --Input-------------
+       |Bob                 |
+        --------------------
+
+        then:
+        // Author info:                 |           // Author info: ~
+        //                              |           // ~
+        // NAME                         |           // Bob ~
+        // EMAIL                        |           // abc@xyz.com ~
+        #include <stdio.h>              |           #include <stdio.h> ~
+                                        | --->
+        int main()                      |           int main() ~
+        {                               |           {
+            printf("Hello World!");     |               printf("Hello World!") ~
+            return 0;                   |               return 0; ~
+        }                               |           }
+
+
+vim:tw=78:ts=8:ft=help:norl:
