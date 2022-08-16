@@ -2,7 +2,7 @@ local M = {}
 
 M.string = function(str)
     return function(callback)
-        callback(str)
+        callback(tostring(str))
     end
 end
 
