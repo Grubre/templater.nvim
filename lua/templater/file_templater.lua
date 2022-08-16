@@ -31,37 +31,38 @@ end
 -- ######################################################
 -- Public function that adds a template
 -- A table of options for the add_template function
--- template_name -> str: the name of the template
+-- name -> str: the name of the template
 -- overwrite ->  {
     --              'yes' - overwrites the file without asking
     --              'prompt' - opens a prompt asking whether to overwrite
     --              'no' - doesn't overwrite
     --          }
-local add_template_def_opts = {template_name = nil, overwrite = "no"}
+local add_template_def_opts = {name = nil, overwrite = "no"}
 
-local _add_template = function(template_name, opts)
+local _add_template = function(name, opts)
     local file_path = config.options.file_templates_path
-    if opts.overwrite == 'prompt' and vim.fn.filereadable(file_path..template_name) then
+    if opts.overwrite == 'prompt' and vim.fn.filereadable(file_path..name) then
         vim.ui.select({'yes','no'}, {prompt='Overwrite file?'}, function(input)
             if input=='yes' then
-                vim.cmd('w! '..file_path..template_name)
+                vim.cmd('w! '..file_path..name)
             end
         end)
     elseif opts.overwrite == 'yes' then
-        vim.cmd('w! '..file_path..template_name)
+        vim.cmd('w! '..file_path..name)
     else -- if no overwrite or prompt and file doesnt exist
-        vim.cmd('w '..file_path..template_name)
+        vim.cmd('w '..file_path..name)
     end
 end
 
 file_templater.add_template = function(opts)
     opts = vim.tbl_deep_extend("force", {}, add_template_def_opts, opts or {})
-    if opts.template_name==nil then
+    if opts.name==nil then
         vim.ui.input({prompt = "Name of the template"}, function(input)
+            if input==nil then return end
             _add_template(input,opts)
         end)
     else
-        _add_template(opts.template_name,opts)
+        _add_template(opts.name,opts)
     end
 end
 
@@ -72,20 +73,20 @@ end
 -- Forward declare
 local _use_template
 -- A table of options for the use_template function
--- template_name -> str: the name of the template
+-- name -> str: the name of the template
 -- buf_type -> str: {
     --                  'e' - create new buffer,
     --                  'v' - use vsplit,
     --                  's' - use split,
     --                  otherwise - use current buffer
                 -- }
-local use_template_def_opts = {template_name = nil, buf_type = 'c'}
+local use_template_def_opts = {name = nil, buf_type = 'c'}
 
 -- A public function to use an existing template
 file_templater.use_template = function (opts)
     opts = vim.tbl_deep_extend("force", {}, use_template_def_opts, opts or {})
-    if not (opts.template_name==nil) then
-        _use_template(opts.template_name, opts)
+    if not (opts.name==nil) then
+        _use_template(opts.name, opts)
     else
         vim.ui.select(file_templater.get_templates(), {prompt = "Choose template"}, function(input)
             assert(input~=nil, "You have to choose a template!")
@@ -95,8 +96,8 @@ file_templater.use_template = function (opts)
 end
 
 -- Private function that copies contents of a template to a buffer
-_use_template = function(template_name, opts)
-    local chosen_template = config.options.file_templates_path..template_name
+_use_template = function(name, opts)
+    local chosen_template = config.options.file_templates_path..name
     assert(vim.fn.filereadable(chosen_template)~=0, "Template not found!")
     -- Read the file
     local file = assert(io.open(chosen_template, "r"), "Error while trying to read the template!")
@@ -107,13 +108,13 @@ _use_template = function(template_name, opts)
     end
 
     if opts.buf_type=='e' then
-        vim.api.nvim_command('e! '..template_name)
+        vim.api.nvim_command('e! '..name)
     elseif opts.buf_type=='v' then
         vim.api.nvim_command('vsplit')
-        vim.api.nvim_buf_set_name(0, template_name)
+        vim.api.nvim_buf_set_name(0, name)
     elseif opts.buf_type=='s' then
         vim.api.nvim_command('split')
-        vim.api.nvim_buf_set_name(0, template_name)
+        vim.api.nvim_buf_set_name(0, name)
     end
     local og_row, og_column = unpack(vim.api.nvim_win_get_cursor(0))
     vim.fn.append(og_row-1,lines)
@@ -126,17 +127,17 @@ end
 -- REMOVE_TEMPLATE
 -- ######################################################
 -- A public function to remove a template
-file_templater.remove_template = function (template_name)
+file_templater.remove_template = function (name)
     local file_path = config.options.file_templates_path
     local templates = file_templater.get_templates()
-    if template_name==nil then
+    if name==nil then
         vim.ui.select(templates, {prompt = "Delete template"}, function(input)
             assert(vim.fn.filereadable(file_path..input)~=0, "Template "..input.. " doesn't exist!")
             vim.cmd('silent !rm '..file_path..input)
         end)
     else
-        assert(vim.fn.filereadable(file_path..template_name)~=0, "Template "..template_name.. " doesn't exist!")
-        vim.cmd('silent !rm '..file_path..template_name)
+        assert(vim.fn.filereadable(file_path..name)~=0, "Template "..name.. " doesn't exist!")
+        vim.cmd('silent !rm '..file_path..name)
     end
 end
 
