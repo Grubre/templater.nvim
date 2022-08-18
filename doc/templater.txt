@@ -135,17 +135,17 @@ templater.sub()                                              *templater.sub()*
         --------------------
 
         then:
-        // Author info:                 |           // Author info: ~
-        //                              |           // ~
-        // NAME                         |           // Bob ~
-        // EMAIL                        |           // abc@xyz.com ~
+        // Author info:                            // Author info: ~
+        //                                         // ~
+        // NAME                                    // Bob ~
+        // EMAIL                                   // abc@xyz.com ~
         #include <stdio.h>              |           #include <stdio.h> ~
-                                        | --->
-        int main()                      |           int main() ~
-        {                               |           {
-            printf("Hello World!");     |               printf("Hello World!") ~
-            return 0;                   |               return 0; ~
-        }                               |           }
+                                    --->
+        int main()                                 int main() ~
+        {                                          {
+            printf("Hello World!");                    printf("Hello World!") ~
+            return 0;                                  return 0; ~
+        }                                          }
 
 
 vim:tw=78:ts=8:ft=help:norl:
