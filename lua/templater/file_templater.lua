@@ -83,7 +83,7 @@ file_templater.use_template = function (opts)
         _use_template(opts.name, opts)
     else
         vim.ui.select(file_templater.get_templates(), {prompt = "Choose template"}, function(input)
-            assert(input~=nil, "You have to choose a template!")
+            if input==nil then return end
             _use_template(input, opts)
         end)
     end
