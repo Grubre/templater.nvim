@@ -1,7 +1,11 @@
 local config = require("templater.config")
 local M = {}
 
--- RECURSIVE IMPLEMENTATION
+
+-- ######################################################
+-- SUBSTITUTE VARS
+-- ######################################################
+-- Private function that substitutes variable #index
 M._sub_vars = function(index)
     if index>#config.variable_names then return end
         -- Substitute the variables
@@ -18,8 +22,8 @@ M._sub_vars = function(index)
     func(callback_func)
 end
 
--- API FUNCTION
-M._substitute_vars = function ()
+-- Public API function
+M.substitute_vars = function ()
     -- Get the current cursor position to restore it after the substitutions
     local og_row, og_column = unpack(vim.api.nvim_win_get_cursor(0))
 
@@ -28,6 +32,47 @@ M._substitute_vars = function ()
 
     -- Move the cursor back to it's original position
     vim.api.nvim_win_set_cursor(0, {og_row, og_column})
+end
+
+
+-- ######################################################
+-- ADD VARIABLE
+-- ######################################################
+-- Public function that adds a variable
+M.add_variable = function(name, func)
+    assert(type(name)=="string", "You need to specify the variable name!")
+    assert(type(func)=="function", "You need to specify the function! (it takes callback function as a parameter)")
+    config.options.variables[name] = func
+    table.insert(config.variable_names, name)
+end
+
+
+-- ######################################################
+-- REMOVE VARIABLE
+-- ######################################################
+--
+local remove_variable_def_opts = {name = nil}
+local _remove_variable = function(name, opts)
+    -- Remove from variables table
+    config.options.variables[name] = nil
+    -- Remove from variable_names array
+    for k,v in ipairs(config.variable_names) do
+        if v==name then
+            config.variable_names[k] = nil
+        end
+    end
+end
+
+M.remove_variable = function(opts)
+    opts = vim.tbl_deep_extend("force", {}, remove_variable_def_opts, opts or {})
+    if opts.name == nil then
+        vim.ui.select(config.variable_names,{prompt = "Remove variable"}, function(input)
+            if input==nil then return end
+            _remove_variable(input,opts)
+        end)
+    else
+        _remove_variable(opts.name)
+    end
 end
 
 return M

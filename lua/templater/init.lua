@@ -8,7 +8,9 @@ local templater = {}
 templater.setup = config.setup
 
 -- VARIABLES API
-templater.sub = substitutor._substitute_vars
+templater.sub = substitutor.substitute_vars
+templater.add_variable = substitutor.add_variable
+templater.remove_variable = substitutor.remove_variable
 
 -- FILE TEMPLATES API
 templater.add_template = file_templater.add_template
