@@ -1,6 +1,6 @@
 # templater.nvim
 ## General info
-Neovim plugin for creating usable file and variable templates, written in lua.
+Neovim plugin for creating file and variable templates, written in lua.
 ## Getting started
 ### Installation
 Using [vim-plug](https://github.com/junegunn/vim-plug)
@@ -38,12 +38,13 @@ local defaults = {
 ## Usage
 
 ### File templates
-Currently, there are three functions to interact with the file templates:
+Currently, there are four functions that allow you to interact with the file templates:
 |function                              |description                                                 |
 |--------------------------------------|------------------------------------------------------------|
 |require('templater').add_template()   |Saves the current buffer as a template                      |
 |require('templater').remove_template()|Deletes a saved template                                    |
 |require('templater').use_template()   |Copies contents of selected template under the cursor       |
+|require('templater').get_templates()  |Returns all availble templates as a table of strings        |
 
 #### Adding templates
 With the use ```require("templater").add_template(opt_name)``` you can save the current
@@ -94,9 +95,11 @@ require("templater").setup({
         -- a callback function which also takes one argument,
         -- the string to which all occurences are substituted to
         ["FOO"] = function(callback)
-            local str = ""
-            str = "B".."A".."R"
-            callback(str)
+            vim.ui.input({prompt = "test"}, function(input)
+                local str = ""
+                str = "B".."A".."R"
+                callback(str)
+            end)
         end
     }
 })

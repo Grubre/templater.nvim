@@ -132,6 +132,6 @@ file_templater.remove_template = function (opts)
     else
         _remove_template(opts.name,opts)
     end
-end
 
+end
 return file_templater
