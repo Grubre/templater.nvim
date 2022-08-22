@@ -50,8 +50,10 @@ end
 -- ######################################################
 -- REMOVE VARIABLE
 -- ######################################################
---
+-- A table of options for the remove_variable function
+-- name -> str: the name of the variable
 local remove_variable_def_opts = {name = nil}
+-- private function that actually removes the variable
 local _remove_variable = function(name, opts)
     -- Remove from variables table
     config.options.variables[name] = nil
@@ -62,7 +64,7 @@ local _remove_variable = function(name, opts)
         end
     end
 end
-
+-- A public function to remove a variable
 M.remove_variable = function(opts)
     opts = vim.tbl_deep_extend("force", {}, remove_variable_def_opts, opts or {})
     if opts.name == nil then
