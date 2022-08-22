@@ -1,11 +1,24 @@
+--- Var subtitution module
+--@module var_substitutor
+--@alias M
+
 local config = require("templater.config")
 local M = {}
 
+---@public
+---Getter for the variables table
+---@return table table of variables
+M.get_vars = function()
+    return config.options.variables
+end
 
 -- ######################################################
 -- SUBSTITUTE VARS
 -- ######################################################
--- Private function that substitutes variable #index
+
+---@private
+---@param index integer Index of variable in `variables` table to be substituted
+---Substitutes variable #index
 M._sub_vars = function(index)
     if index>#config.variable_names then return end
         -- Substitute the variables
@@ -21,8 +34,8 @@ M._sub_vars = function(index)
     end
     func(callback_func)
 end
-
--- Public API function
+---@public
+---Substitutes variables in current buffer
 M.substitute_vars = function ()
     -- Get the current cursor position to restore it after the substitutions
     local og_row, og_column = unpack(vim.api.nvim_win_get_cursor(0))
@@ -38,7 +51,11 @@ end
 -- ######################################################
 -- ADD VARIABLE
 -- ######################################################
--- Public function that adds a variable
+
+---@public
+---@param name string name of the variable
+---@param func function corresponding function
+---Adds a variable
 M.add_variable = function(name, func)
     assert(type(name)=="string", "You need to specify the variable name!")
     assert(type(func)=="function", "You need to specify the function! (it takes callback function as a parameter)")
@@ -50,10 +67,18 @@ end
 -- ######################################################
 -- REMOVE VARIABLE
 -- ######################################################
--- A table of options for the remove_variable function
--- name -> str: the name of the variable
-local remove_variable_def_opts = {name = nil}
--- private function that actually removes the variable
+
+---@private
+---A table of options for the remove_variable function
+---@field name the name of variable 
+---@table options
+local remove_variable_def_opts = {
+    name = nil -- name of the variable
+}
+---@private
+---@param name string name of the variable to be removed
+---@param opts table table of options
+---Removes the variable
 local _remove_variable = function(name, opts)
     -- Remove from variables table
     config.options.variables[name] = nil
@@ -64,7 +89,9 @@ local _remove_variable = function(name, opts)
         end
     end
 end
--- A public function to remove a variable
+---@public
+---@param opts table table of options
+---Removes a variable
 M.remove_variable = function(opts)
     opts = vim.tbl_deep_extend("force", {}, remove_variable_def_opts, opts or {})
     if opts.name == nil then

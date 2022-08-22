@@ -1,15 +1,21 @@
+--- Templates module
+--@module file_templater
+--@alias file_templater
 local config = require("templater.config")
 local file_templater = {}
 
 
--- Helper function to keep the blank lines when yanking contents from a file
+---Keeps the blank lines when yanking contents from a file
+---@private
+---@tparam string s string to be parsed
 local keep_blank_lines = function(s)
     if s:sub(-1)~="\n" then s=s.."\n" end
     return s:gmatch("(.-)\n")
 end
 
-
--- Returns all the templates saved in config.options.file_templates_path directory
+---Getter for templates saved in config.options.file_templates_path directory
+---@public
+---@treturn table templates table of names of existing templates
 file_templater.get_templates = function()
     -- Get file names in the template folder using ls
     local handle = io.popen('ls '..config.options.file_templates_path)
@@ -29,16 +35,21 @@ end
 -- ######################################################
 -- ADD_TEMPLATE
 -- ######################################################
--- Public function that adds a template
--- A table of options for the add_template function
--- name -> str: the name of the template
--- overwrite ->  {
-    --              'yes' - overwrites the file without asking
-    --              'prompt' - opens a prompt asking whether to overwrite
-    --              'no' - doesn't overwrite
-    --          }
+
+---A table of options for the add_template function
+---@table add_opts
+---@field name the name of a template
+---@field overwrite Possible overwrite values -> {
+---        'yes' - overwrites the file without asking,
+---        'prompt' - opens a prompt asking whether to overwrite,
+---        'no' - doesn't overwrite,
+---   }
 local add_template_def_opts = {name = nil, overwrite = "no"}
 
+---Adds a template
+---@private
+---@tparam string name name of the template
+---@tparam table opts passed options
 local _add_template = function(name, opts)
     local file_path = config.options.file_templates_path
     if opts.overwrite == 'prompt' and vim.fn.filereadable(file_path..name) then
@@ -54,6 +65,10 @@ local _add_template = function(name, opts)
     end
 end
 
+---Adds a template
+---@public
+---@tparam table opts table of options
+---@see add_opts
 file_templater.add_template = function(opts)
     opts = vim.tbl_deep_extend("force", {}, add_template_def_opts, opts or {})
     if opts.name==nil then
@@ -70,13 +85,22 @@ end
 -- ######################################################
 -- USE_TEMPLATE
 -- ######################################################
--- Forward declare
+
+---Pastes a template under cursor
+---@private
+---@tparam string name of the template
+---@tparam table opts table of options
 local _use_template
--- A table of options for the use_template function
--- name -> str: the name of the template
+
+---A table of options for the use_template function
+---@private
+---@table use_opts
+---@field name the name of the template
 local use_template_def_opts = {name = nil}
 
--- A public function to use an existing template
+---Pastes a template under cursor
+---@public
+---@tparam table opts table of options
 file_templater.use_template = function (opts)
     opts = vim.tbl_deep_extend("force", {}, use_template_def_opts, opts or {})
     if not (opts.name==nil) then
@@ -89,7 +113,6 @@ file_templater.use_template = function (opts)
     end
 end
 
--- Private function that copies contents of a template to a buffer
 _use_template = function(name, opts)
     local chosen_template = config.options.file_templates_path..name
     assert(vim.fn.filereadable(chosen_template)~=0, "Template not found!")
@@ -111,16 +134,24 @@ end
 -- ######################################################
 -- REMOVE_TEMPLATE
 -- ######################################################
--- A table of options for the remove_template function
--- name -> str: the name of the template
+
+---A table of options for the remove_template function
+---@private
+---@table remove_opts
+---@field name string the name of the template
 local remove_template_def_opts = {name = nil}
--- private function that actually removes the template
+---removes a template
+---@private
+---@tparam string name name of the template
+---@tparam table opts table of options
 local _remove_template = function (name, opts)
     local file_path = config.options.file_templates_path
     assert(vim.fn.filereadable(file_path..name)~=0, "Template "..name.. " doesn't exist!")
     vim.cmd('silent !rm '..file_path..name)
 end
--- A public function to remove a template
+---Deletes a template file
+---@public
+---@tparam table opts table of options
 file_templater.remove_template = function (opts)
     opts = vim.tbl_deep_extend("force", {}, remove_template_def_opts, opts or {})
     local templates = file_templater.get_templates()

@@ -1,10 +1,20 @@
+---Config module
+---@module config
+---@alias config
 local config = {}
 
+---@private
+---@table defaults
+---@field file_templates_path path where templater will be stored
+---@field variables table a table of variables
 local defaults = {
     file_templates_path = vim.fn.stdpath("data").."/templater/",
     variables = {},
 }
 
+---@private
+---@param opts table user options
+---sets the options table
 config.setup = function(opts)
     config.options = vim.tbl_deep_extend("force", {}, defaults, opts or {}) 
     config.variable_names = {}
