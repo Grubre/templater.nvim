@@ -1,6 +1,6 @@
-local config = require("templater.config")
-local substitutor = require("templater.var_substitutor")
-local file_templater = require("templater.file_templater")
+local config = require "templater.config"
+local substitutor = require "templater.var_substitutor"
+local file_templater = require "templater.file_templater"
 
 local templater = {}
 

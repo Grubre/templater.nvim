@@ -1,5 +1,5 @@
 describe("templator", function()
     it("create test framework", function()
-        print("true")
+        print "true"
     end)
 end)
