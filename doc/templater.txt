@@ -202,7 +202,7 @@ templater.sub()                                              *templater.sub()*
         //                                         // ~
         // NAME                                    // Bob ~
         // EMAIL                                   // abc@xyz.com ~
-        #include <stdio.h>                          #include <stdio.h> ~
+        #include <stdio.h>                         #include <stdio.h> ~
                                     --->
         int main()                                 int main() ~
         {                                          {
@@ -214,6 +214,14 @@ templater.sub()                                              *templater.sub()*
 templater.get_variables()                          *templater.get_variables()*
 
     Returns the table of variables - (name, function) pairs.
+
+
+
+
+
+
+
+
 
 
 vim:tw=78:ts=8:ft=help:norl:
