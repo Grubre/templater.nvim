@@ -28,7 +28,7 @@ require("templater").setup({
     ...your opts...
 })
 ```
-The default values are:
+The default config values are:
 ```lua
 local defaults = {
     file_templates_path = vim.fn.stdpath("data").."/templater/",
@@ -39,38 +39,22 @@ local defaults = {
 
 ### File templates
 Currently, there are four functions that allow you to interact with the file templates:
-|function                              |description                                                 |
-|--------------------------------------|------------------------------------------------------------|
-|require('templater').add_template()   |Saves the current buffer as a template                      |
-|require('templater').remove_template()|Deletes a saved template                                    |
-|require('templater').use_template()   |Copies contents of selected template under the cursor       |
-|require('templater').get_templates()  |Returns all availble templates as a table of strings        |
+|function                                    |description                                             |
+|--------------------------------------------|--------------------------------------------------------|
+|`require('templater').add_template(opts)`   |Saves the current buffer as a template                  |
+|`require('templater').remove_template()opts`|Deletes a saved template                                |
+|`require('templater').use_template(opts)`   |Copies selected template under the cursor               |
+|`require('templater').get_templates(opts)`  |Returns all availble templates as a table of strings    |
 
-#### Adding templates
-With the use ```require("templater").add_template(opt_name)``` you can save the current
-buffer as a template. The ```opt_name``` parameter will be used as the name for the template,
-if you don't pass any arguments to the function, you will be asked to provide a name using
-vim.ui.input.
-
-#### Deleting templates
-Similarly to adding templates, by using ```require("templater").remove_template(opt_name)```
-you can remove template of name ```opt_name```. If you don't pass any arguments you will be
-prompted to choose one with vim.ui.select.
-
-#### Using templates
-Just like the previous two functions, you can do ```require("templater").use_template(opt_name)```
-to use template of name ```opt_name```. If you don't pass any parameters, you will be asked to
-select a template from the list using vim.ui.select. The chosen template gets yanked to the current
-buffer, under your cursor.
+See `:h templater.templates`
 
 ### Variables
-In order to use the plugin you have to declare your ```["variable"] = substitution``` pairs.\
-You can do this by overriding the ```variables``` table in the setup function.\
-Then you can use the ```require("templater").sub()``` function or ```:Sub``` command to
-substitute all the variables found in the current buffer to their corresponding substitution value.
+Variables are `(pattern, function)` pairs. Once you define them (shown below), you can
+substitute all `patterns` found in current buffer using `require('templater').sub()`.\
+There are two types of variables:
 
-### For example:
-In your call to the setup function you can add variables in a following way:
+#### Global variables
+You can add global variables in your call to the setup function.
 ```lua
 local templates = require("templater.templates")
 require("templater").setup({
@@ -103,3 +87,113 @@ require("templater").setup({
         end
     }
 })
+```
+You can also interact with them with `templater.add_variable()` and `templater.remove_variable()`
+functions.
+#### Local variables
+Local variables are defined per file. They are best used in combination with file templates.\
+To add local variables, you have to put them between `TEMPLATER_CONFIG` and `TEMPLATER_CONFIG_END`
+lines somewhere in your file. You can then specify variables with `VAR(your_var_name)` followed by
+corresponding function.
+```lua
+TEMPLATER_CONFIG
+VAR(path)
+function(callback)
+    callback(vim.fn.expand('%:p'))
+end
+VAR(another_var)
+require('templater.templates').input({prompt = 'new_var'})
+TEMPLATER_CONFIG_END
+-- The rest of your code...
+```
+#### Example
+You can for example create a template file for competetive programming.\
+Global variables:
+```lua
+VAR(TMP_AUTHOR)
+require('temp')
+VAR(TMP_DATE)
+function(callback)
+    callback(os.date("%c"))
+end
+require("templater").setup({
+    variables = {
+        ["TMP_CURR_DATETIME"] = templates.string(os.date("%c")),
+        ["TMP_PATH"] = templates.string(vim.fn.expand("%:p"))
+        ["TMP_AUTHOR"] = templates.string("Bob")
+    }
+})
+```
+The file before using `templater.sub()`:
+```c++
+TEMPLATER_CONFIG
+VAR(TMP_PROBLEM_LINK)
+require('templater.templates').input({prompt = 'Link'})
+TEMPLATER_CONFIG_END
+// Author: TMP_AUTHOR
+// Date: TMP_DATE
+// Problem: TMP_PROBLEM_LINK
+#include <bits/stdc++.h>
+
+void f()
+{
+
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t;
+    std::cin >> t;
+
+    while(t-->0)
+    {
+        f();
+    }
+    return 0;
+}
+```
+After you use `templater.sub()`, you will be prompted with `vim.ui.input`\
+\
+![Screenshot_20220824_200150](https://user-images.githubusercontent.com/69735117/186490794-49cc8850-930a-4587-9006-9dad72133221.png) \
+After you enter the link, your buffer will look like this:
+```C++
+// Author: Bob
+// Date: wed, 24 aug 2022, 20:08:17 
+// Problem: https://codeforces.com/problemset/problem/1720/E
+#include <bits/stdc++.h>
+
+void f()
+{
+
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t;
+    std::cin >> t;
+
+    while(t-->0)
+    {
+        f();
+    }
+    return 0;
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
