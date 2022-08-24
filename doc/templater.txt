@@ -21,9 +21,7 @@ templater.setup({opts})                                    *templater.setup()*
         --Specifies where template files are stored
         --By default is equal to vim.fn.stdpath("data").."/templater/",
         file_templates_path = "your/path/to/templates",
-        --Specifies variables used by var_substitutor
-        --Empty by default, in order to use the module,
-        --you have to put some variables here.
+        --Specifies global variables used by var_substitutor
         variables = {
             -- You can use builtin templates:
             -- String:
@@ -54,7 +52,7 @@ templater.setup({opts})                                    *templater.setup()*
 ============================================================================
 TEMPLATES                                                *templater.templates*
 
-    The templates module is responsible for interaction with file templates.
+    The `templates` module is responsible for interaction with file templates.
 
 templater.add_template({opts})                      *templater.add_template()*
 
@@ -109,15 +107,80 @@ templater.remove_template({opts})               *templater.remove_template()*
     Options: ~
         {name}                  (string)        name of the template,
                                                 if nil, the user will be
-                                                prompted with vim.ui.input
-                                                to provide the name
+                                                prompted with vim.ui.select
+                                                to choose.
 
 
 ============================================================================
 VARIABLES                                                *templater.variables*
 
-    The `variables` is responsible for interacting with variables.
-    How to set `variables` is shown in |templater.quickstart|.
+    The `variables` module is responsible for interacting with variables.
+    There are two types of variables: `global` and `local`.
+
+
+local variables                                    *templater.variables.local*
+
+    Local variables are set per file. They are best used in combination
+    with file templates. To add local variables, you have to
+    put them between `TEMPLATER_CONFIG` and `TEMPLATER_CONFIG_END` lines
+    somewhere in your file. You can then specify variables with
+    `VAR(your_var_name)` line, followed by the corresponding function.
+
+
+    Example:
+
+        TEMPLATER_CONFIG
+        VAR(path)
+        function(callback)
+            callback(vim.fn.expand("%:p"))
+        end
+        VAR(another_var)
+            require("templater.templates").input({prompt = "new_var"})
+        TEMPLATER_CONFIG_END
+        -- The rest of your code...
+
+
+global variables                                  *templater.variables.global*
+
+    Global variables are shared between all buffers.
+    One way to set them was shown in |templater.quickstart|.
+    Another way to interact with them are `add_variable` and
+    `remove_variable` functions.
+
+
+templater.add_variable({name},{func})               *templater.add_variable()*
+
+    Adds a new global variable
+
+
+    Parameters: ~
+        {name}  (string)        Name of new variable
+
+        {func}  (function)      Corresponding function, it has to take
+                                exactly one parameter `(callback)`,
+                                a function that accepts a string,
+                                the value which all occurences of
+                                the variable will be substituted to.
+                                It has to be called `once` in your
+                                function.
+
+
+templater.remove_variable({opts})                *templater.remove_variable()*
+
+    Deletes an existing global variable
+
+
+    Parameters: ~
+        {opts}  (table)  options defining the function behavior
+                         default values:
+                         {name = nil}
+
+    Options: ~
+        {name}                  (string)        name of the variable,
+                                                if nil, the user will be
+                                                prompted with vim.ui.select
+                                                to choose
+
 
 templater.sub()                                              *templater.sub()*
 
@@ -139,13 +202,18 @@ templater.sub()                                              *templater.sub()*
         //                                         // ~
         // NAME                                    // Bob ~
         // EMAIL                                   // abc@xyz.com ~
-        #include <stdio.h>              |           #include <stdio.h> ~
+        #include <stdio.h>                          #include <stdio.h> ~
                                     --->
         int main()                                 int main() ~
         {                                          {
             printf("Hello World!");                    printf("Hello World!") ~
             return 0;                                  return 0; ~
         }                                          }
+
+
+templater.get_variables()                          *templater.get_variables()*
+
+    Returns the table of variables - (name, function) pairs.
 
 
 vim:tw=78:ts=8:ft=help:norl:
